@@ -1,0 +1,5 @@
+# Runtime deps for running the crawler locally (python flask_crawl.py).
+# Lambda-only extras live in requirements-lambda.txt.
+flask==3.0.3
+requests==2.32.3
+beautifulsoup4==4.12.3
