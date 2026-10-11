@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Crawler & Topic Extractor</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background-color: #f9f9fa; color: #333; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #1a1a1a; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        button { padding: 12px 24px; background-color: #0066cc; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+        button:hover { background-color: #0052a3; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        pre { background-color: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 14px; display: none; }
+        .loader { display: none; margin-bottom: 15px; font-weight: bold; color: #0066cc; }
+        .test-links { margin-bottom: 20px; font-size: 14px; }
+        .test-links a { color: #0066cc; text-decoration: none; margin-right: 15px; cursor: pointer;}
+        .test-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Web Crawler Metadata Extractor</h1>
+    <p>Enter a URL below to extract its title, description, and primary topics.</p>
+    
+    <div class="test-links">
+        <strong>Test URLs:</strong><br>
+        <a onclick="fillInput('https://www.cnn.com/2025/09/23/tech/google-study-90-percent-tech-jobs-ai')">CNN Tech Article</a>
+        <a onclick="fillInput('http://blog.rei.com/camp/how-to-introduce-your-indoorsy-friend-to-the-outdoors/')">REI Blog</a>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="urlInput" placeholder="https://www.example.com" required>
+        <button id="crawlBtn" onclick="submitCrawl()">Crawl URL</button>
+    </div>
+
+    <div id="loader" class="loader">Crawling URL... Please wait.</div>
+    <pre id="jsonOutput"></pre>
+</div>
+
+<script>
+    function fillInput(url) {
+        document.getElementById('urlInput').value = url;
+    }
+
+    async function submitCrawl() {
+        const urlInput = document.getElementById('urlInput').value.trim();
+        const crawlBtn = document.getElementById('crawlBtn');
+        const loader = document.getElementById('loader');
+        const jsonOutput = document.getElementById('jsonOutput');
+
+        if (!urlInput) {
+            alert('Please enter a URL');
+            return;
+        }
+
+        // Reset UI state
+        crawlBtn.disabled = true;
+        loader.style.display = 'block';
+        jsonOutput.style.display = 'none';
+        jsonOutput.textContent = '';
+
+        try {
+            const response = await fetch('/api/crawl', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: urlInput })
+            });
+            
+            const data = await response.json();
+            
+            // Format and display the JSON result
+            jsonOutput.textContent = JSON.stringify(data, null, 4);
+            jsonOutput.style.display = 'block';
+        } catch (error) {
+            jsonOutput.textContent = JSON.stringify({ error: "Failed to connect to the crawler service." }, null, 4);
+            jsonOutput.style.display = 'block';
+        } finally {
+            // Restore UI state
+            crawlBtn.disabled = false;
+            loader.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
