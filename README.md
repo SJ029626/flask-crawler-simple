@@ -7,6 +7,14 @@ words. There's a one-page browser UI at `/` and a JSON endpoint at
 
 Same `app` object runs locally and on AWS Lambda via `lambda_handler.py`.
 
+## Live demo
+
+https://hjvmsd4lol4kw7xzlcy5brn3hu0llqzb.lambda-url.us-east-1.on.aws/
+
+Running on AWS Lambda behind a Function URL. It's an open demo with no auth
+and no rate limiting, so treat it as a throwaway — see
+[Known limitations](#known-limitations) before pointing it at anything.
+
 ## Requirements
 
 - Python 3.9 or newer (3.12 is what the Lambda build targets)
@@ -98,6 +106,8 @@ This is a demo, not a production crawler.
   private-IP check, or at minimum a shared-secret header.
 - **No robots.txt handling.** Pages are fetched regardless of what the host's
   robots.txt says.
+- **The live demo above is this exact code, unauthenticated.** Anyone with the
+  link can make it fetch any URL.
 - **Debug mode is on** in `flask_crawl.py`. Fine locally, not for anything
   reachable by others.
 - **Topic ranking is naive.** Site furniture ("sign", "account") competes with
